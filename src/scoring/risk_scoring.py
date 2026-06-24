@@ -54,47 +54,103 @@ def calculate_score(
     compliance_df
 ):
 
-    risk_score = 0
+    # ======================================
+    # RISK PENALTY
+    # ======================================
 
-    unique_risks = (
-        risk_df["risk_type"]
-        .dropna()
-        .unique()
-    )
+    risk_penalty = 0
 
-    for risk_type in unique_risks:
+    if (
+        risk_df is not None
+        and not risk_df.empty
+        and "risk_type" in risk_df.columns
+    ):
 
-        risk_score += RISK_WEIGHTS.get(
-            risk_type,
-            10
+        unique_risks = (
+
+            risk_df["risk_type"]
+            .dropna()
+            .unique()
+
         )
 
+        for risk_type in unique_risks:
+
+            risk_penalty += (
+
+                RISK_WEIGHTS.get(
+                    risk_type,
+                    10
+                )
+
+            )
+
+    else:
+
+        unique_risks = []
+
+    # ======================================
+    # COMPLIANCE PENALTY
+    # ======================================
+
     missing_requirements = compliance_df[
-        compliance_df["status"] == "MISSING"
+
+        compliance_df["status"]
+        == "MISSING"
+
     ]
 
     compliance_penalty = 0
 
-    for _, row in missing_requirements.iterrows():
+    for _, row in (
+        missing_requirements.iterrows()
+    ):
 
         compliance_penalty += (
+
             COMPLIANCE_WEIGHTS.get(
                 row["requirement"],
                 10
             )
+
         )
 
-    total_penalty = (
-    risk_score +
-    compliance_penalty
+    # ======================================
+    # WEIGHTED PENALTY
+    # ======================================
+
+    weighted_penalty = (
+
+        (risk_penalty * 0.60)
+
+        +
+
+        (compliance_penalty * 0.40)
+
     )
 
-    total_penalty = min(
-    total_penalty,
-    100
+    weighted_penalty = min(
+        weighted_penalty,
+        100
     )
 
-    final_score = 100 - total_penalty
+    # ======================================
+    # FINAL SCORE
+    # ======================================
+
+    final_score = (
+        100 - weighted_penalty
+    )
+
+    final_score = max(
+        final_score,
+        0
+    )
+
+    # ======================================
+    # RISK LEVEL
+    # ======================================
+
     if final_score >= 80:
 
         risk_level = "LOW"
@@ -107,29 +163,51 @@ def calculate_score(
 
         risk_level = "HIGH"
 
-    return {
+    # ======================================
+    # REPORT
+    # ======================================
+
+    report = {
 
         "risk_score":
-            final_score,
+            round(
+                final_score,
+                2
+            ),
 
         "risk_level":
             risk_level,
 
         "safety_score":
-            100 - final_score,
+            round(
+                final_score,
+                2
+            ),
 
         "unique_risk_types":
-            len(unique_risks),
+            len(
+                unique_risks
+            ),
 
         "missing_compliance_items":
-            len(missing_requirements),
+            len(
+                missing_requirements
+            ),
 
         "risk_penalty":
-            risk_score,
+            risk_penalty,
 
         "compliance_penalty":
-            compliance_penalty
+            compliance_penalty,
+
+        "weighted_penalty":
+            round(
+                weighted_penalty,
+                2
+            )
     }
+
+    return report
 
 
 # ==========================================
@@ -139,17 +217,27 @@ def calculate_score(
 if __name__ == "__main__":
 
     risk_file = (
-        PROJECT_ROOT /
-        "data" /
-        "processed" /
+
+        PROJECT_ROOT
+        /
+        "data"
+        /
+        "processed"
+        /
         "risk_results.csv"
+
     )
 
     compliance_file = (
-        PROJECT_ROOT /
-        "data" /
-        "processed" /
+
+        PROJECT_ROOT
+        /
+        "data"
+        /
+        "processed"
+        /
         "compliance_report_v2.csv"
+
     )
 
     risk_df = pd.read_csv(
@@ -161,8 +249,10 @@ if __name__ == "__main__":
     )
 
     report = calculate_score(
+
         risk_df,
         compliance_df
+
     )
 
     print("\n")
@@ -181,15 +271,22 @@ if __name__ == "__main__":
     )
 
     output_file = (
-        PROJECT_ROOT /
-        "data" /
-        "processed" /
+
+        PROJECT_ROOT
+        /
+        "data"
+        /
+        "processed"
+        /
         "final_contract_report.csv"
+
     )
 
     report_df.to_csv(
+
         output_file,
         index=False
+
     )
 
     print("\nSaved:")

@@ -1,0 +1,9 @@
+risk_type,keywords,severity,recommendation
+Confidentiality Forever,perpetuity|forever|indefinitely|survive till perpetuity,LOW,Consider limiting confidentiality obligations to a defined period.
+Unlimited Liability,unlimited liability|without limitation|all damages,HIGH,Add a liability cap.
+Broad Indemnity,indemnify any claim|all losses|any liability,HIGH,Narrow indemnity obligations.
+One Sided Termination,sole discretion|terminate at any time|without notice,HIGH,Require mutual termination rights.
+Auto Renewal,automatic renewal|automatically renew|auto renew,MEDIUM,Require prior renewal notice.
+No Audit Rights,no audit rights|audit prohibited|cannot audit,MEDIUM,Include audit rights.
+No Data Protection,no data protection|without privacy safeguards,HIGH,Add data protection obligations.
+Weak Security Controls,no security measures|minimal security|reasonable security only,MEDIUM,Strengthen security controls.

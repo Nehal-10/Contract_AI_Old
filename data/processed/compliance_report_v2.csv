@@ -1,7 +1,7 @@
 requirement,status,similarity,matched_clause
-Consent,MISSING,0.335,Need to Know. Auditor shall restrict disclosure of such Confidential Information
-Data Retention,MISSING,0.54,Survival. Both parties agree that all of their obligations undertaken herein with
-Right To Deletion,MISSING,0.256,Survival. Both parties agree that all of their obligations undertaken herein with
-Data Processing,MISSING,0.375,Definitions:
-Data Security,MISSING,0.411,Need to Know. Auditor shall restrict disclosure of such Confidential Information
-Data Transfer,MISSING,0.267,Authority. The parties represent and warrant that they have all necessary
+Definition Of Confidential Information,FOUND,0.621,Definitions:
+Confidentiality Obligations,FOUND,0.56,Need to Know. Auditor shall restrict disclosure of such Confidential Information
+Permitted Disclosures,FOUND,0.577,No Conflict. The parties represent and warrant that the performance of its
+Return Or Destruction Of Information,FOUND,0.58,Survival. Both parties agree that all of their obligations undertaken herein with
+Term Of Confidentiality,FOUND,0.663,Survival. Both parties agree that all of their obligations undertaken herein with
+Governing Law,FOUND,0.591,Governing Law. This Agreement shall be interpreted in accordance with and

@@ -4,39 +4,78 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-SIMILARITY_THRESHOLD = 0.60
+
+SIMILARITY_THRESHOLD = 0.50
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-CLAUSES_FILE = (
-    PROJECT_ROOT /
-    "data" /
-    "processed" /
-    "all_clauses.csv"
-)
-
-REQUIREMENTS_FILE = (
-    PROJECT_ROOT /
-    "data" /
-    "compliance_requirements.csv"
-)
+# CLAUSES_FILE = (
+#     PROJECT_ROOT /
+#     "data" /
+#     "processed" /
+#     "all_clauses.csv"
+# )
 
 
-def detect_compliance(clauses_df = None):
-    if clauses_df is None:
+def detect_compliance(
+    clauses_df,
+    contract_type
+):
 
-        clauses_df = pd.read_csv(
-            CLAUSES_FILE
-        )
-    
+    # if clauses_df is None:
+
+    #     clauses_df = pd.read_csv(
+    #         CLAUSES_FILE
+    #     )
+
     clauses_df["text"] = (
         clauses_df["text"]
         .fillna("")
         .astype(str)
     )
 
+    # =====================================
+    # LOAD CONTRACT-SPECIFIC REQUIREMENTS
+    # =====================================
+
+    if contract_type == "NDA":
+
+        requirements_file = (
+            PROJECT_ROOT /
+            "data" /
+            "compliance" /
+            "nda_requirements.csv"
+        )
+
+    elif contract_type == "Employment":
+
+        requirements_file = (
+            PROJECT_ROOT /
+            "data" /
+            "compliance" /
+            "employment_requirements.csv"
+        )
+
+    elif contract_type == "MSA":
+
+        requirements_file = (
+            PROJECT_ROOT /
+            "data" /
+            "compliance" /
+            "msa_requirements.csv"
+        )
+
+    else:
+
+        requirements_file = (
+            PROJECT_ROOT /
+            "data" /
+            "compliance" /
+            "vendor_requirements.csv"
+        )
+
     requirements_df = pd.read_csv(
-        REQUIREMENTS_FILE
+        requirements_file
     )
 
     print(
@@ -87,16 +126,26 @@ def detect_compliance(clauses_df = None):
         )
 
         results.append({
-            "requirement": requirement,
-            "status": status,
-            "similarity": round(
-                float(best_score),
-                3
-            ),
-            "matched_clause": matched_clause
+
+            "requirement":
+                requirement,
+
+            "status":
+                status,
+
+            "similarity":
+                round(
+                    float(best_score),
+                    3
+                ),
+
+            "matched_clause":
+                matched_clause
         })
 
-    results_df = pd.DataFrame(results)
+    results_df = pd.DataFrame(
+        results
+    )
 
     output_file = (
         PROJECT_ROOT /
@@ -115,7 +164,9 @@ def detect_compliance(clauses_df = None):
 
 if __name__ == "__main__":
 
-    results_df = detect_compliance()
+    results_df = detect_compliance(
+        contract_type="NDA"
+    )
 
     print("\n")
     print("=" * 80)

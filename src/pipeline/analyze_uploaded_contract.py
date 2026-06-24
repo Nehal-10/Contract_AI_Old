@@ -24,6 +24,36 @@ from src.classification.contract_classifier import (
 )
 
 
+# =====================================
+# SUMMARY GENERATOR
+# =====================================
+
+def generate_summary(
+    contract_type,
+    risk_level,
+    risk_count,
+    missing_count
+):
+
+    risk_word = (
+    "risk finding"
+    if risk_count == 1
+    else "risk findings"
+)
+    summary = (
+        f"This {contract_type} contains "
+        f"{risk_count} risk findings and "
+        f"{missing_count} missing compliance items. "
+        f"Overall risk level is {risk_level}."
+    )
+
+    return summary
+
+
+# =====================================
+# MAIN ANALYSIS FUNCTION
+# =====================================
+
 def analyze_contract(pdf_path):
 
     print("\n")
@@ -97,7 +127,8 @@ def analyze_contract(pdf_path):
     )
 
     compliance_df = detect_compliance(
-        clauses_df
+    clauses_df,
+    contract_type
     )
 
     missing_count = len(
@@ -127,6 +158,14 @@ def analyze_contract(pdf_path):
         compliance_df
     )
 
+
+    summary = generate_summary(
+    contract_type,
+    report["risk_level"],
+    len(risk_df),
+    missing_count
+    )
+
     # =====================================
     # FINAL RESULT
     # =====================================
@@ -141,6 +180,9 @@ def analyze_contract(pdf_path):
 
         "risk_level":
             report["risk_level"],
+
+        "summary":
+            summary,
 
         "unique_risk_types":
             report["unique_risk_types"],
@@ -158,19 +200,28 @@ def analyze_contract(pdf_path):
                 "compliance_penalty"
             ],
 
-        "risk_findings":
-            risk_df[
-                "risk_type"
-            ].dropna()
-             .unique()
-             .tolist(),
+        # "risk_findings":
+        #     risk_df[
+        #         "risk_type"
+        #     ].dropna()
+        #      .unique()
+        #      .tolist(),
+
+        "risks": risk_df.to_dict(
+            orient="records"
+            ),
 
         "missing_requirements":
             compliance_df[
                 compliance_df["status"]
                 == "MISSING"
             ]["requirement"]
-             .tolist()
+             .tolist(),
+            
+        "compliance_details":
+            compliance_df.to_dict(
+            orient="records"
+            )
 
     }
 

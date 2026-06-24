@@ -1,6 +1,6 @@
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-
+from src.models.embedding_model import model
 
 CONTRACT_TYPES = {
 
@@ -55,9 +55,9 @@ CONTRACT_TYPES = {
 
 def classify_contract(text):
 
-    model = SentenceTransformer(
-        "all-MiniLM-L6-v2"
-    )
+    # model = SentenceTransformer(
+    #     "all-MiniLM-L6-v2"
+    # )
 
     contract_embedding = model.encode(
         [text[:5000]]

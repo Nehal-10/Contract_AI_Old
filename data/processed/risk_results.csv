@@ -1,2 +1,2 @@
-title,risk_type,similarity,matched_clause
-Survival. Both parties agree that all of their obligations undertaken herein with,Confidentiality Forever,0.763,Recipient shall maintain confidentiality indefinitely.
+title,risk_type,severity,similarity,matched_clause,recommendation,contract_clause
+Survival. Both parties agree that all of their obligations undertaken herein with,Confidentiality Forever,LOW,0.763,Recipient shall maintain confidentiality indefinitely.,Consider limiting confidentiality obligations to a defined period.,respect to Confidential Information received pursuant to this Agreement shall survive till perpetuity even after expiration or termination of this Agreement. 
