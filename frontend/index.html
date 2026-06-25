@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Contract AI</title>
+
+    <link rel="stylesheet"
+          href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <nav>
+
+        <div>
+
+            <h1>Contract AI</h1>
+
+            <p>AI-Powered Contract Analysis System</p>
+
+        </div>
+
+    </nav>
+
+    <!-- Hero -->
+
+    <section class="hero">
+
+        <h2>Contract Intelligence Platform</h2>
+
+        <p>
+            Upload contracts, identify risks,
+            check compliance requirements,
+            generate summaries, and track
+            contract history using AI.
+        </p>
+
+    </section>
+
+    <!-- Upload Section -->
+
+    <section class="card">
+
+        <h3>📄 Upload Contract</h3>
+
+        <input
+            type="file"
+            id="pdfFile"
+            accept=".pdf"
+        >
+
+        <button id="analyzeBtn">
+
+            Analyze Contract
+
+        </button>
+
+        <div
+            id="loader"
+            class="hidden"
+        >
+
+            <div class="spinner"></div>
+
+            <p>Analyzing Contract...</p>
+
+        </div>
+
+    </section>
+
+    <!-- Results -->
+
+    <section class="card">
+
+        <h3>📊 Analysis Results</h3>
+
+        <div class="results-grid">
+
+            <div class="result-box">
+
+                <h4>Contract Type</h4>
+
+                <p id="contractType">-</p>
+
+            </div>
+
+            <div class="result-box">
+
+                <h4>Risk Score</h4>
+
+                <p id="riskScore">-</p>
+
+            </div>
+
+            <div class="result-box">
+
+                <h4>Risk Level</h4>
+
+                <p id="riskLevel">-</p>
+
+            </div>
+
+        </div>
+
+        <h4>Executive Summary</h4>
+
+        <p id="summary">
+
+            No analysis available.
+
+        </p>
+
+    </section>
+
+    <!-- Risks -->
+
+    <section class="card">
+
+        <h3>⚠ Risk Findings</h3>
+
+        <div id="riskContainer">
+
+            <p>
+                No risks detected yet.
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- Compliance -->
+
+    <section class="card">
+
+        <h3>✅ Compliance Results</h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Requirement</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="complianceTable">
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- Charts -->
+
+    <section class="card">
+
+        <h3>📈 Analytics</h3>
+
+        <div class="chart-container">
+
+            <canvas id="riskChart"></canvas>
+
+        </div>
+
+        <div class="chart-container">
+
+            <canvas id="typeChart"></canvas>
+
+        </div>
+
+    </section>
+
+    <!-- History -->
+
+    <section class="card">
+
+        <h3>🕒 Analysis History</h3>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>File Name</th>
+
+                    <th>Contract Type</th>
+
+                    <th>Risk Score</th>
+
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="historyTable">
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+            Contract AI © 2026
+        </p>
+
+        <p>
+            AI-Powered Contract Analysis for Legal & Compliance Teams
+        </p>
+
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
