@@ -1,19 +1,11 @@
 from pathlib import Path
 import pandas as pd
 
-# from sentence_transformers import SentenceTransformer
-from src.models.embedding_model import model
 from sklearn.metrics.pairwise import cosine_similarity
 
+from src.models.embedding_model import model
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-# CLAUSES_FILE = (
-#     PROJECT_ROOT /
-#     "data" /
-#     "processed" /
-#     "all_clauses.csv"
-# )
 
 RISK_FILE = (
     PROJECT_ROOT /
@@ -22,43 +14,13 @@ RISK_FILE = (
     "high_risk_clauses.csv"
 )
 
-KEYWORDS_FILE = (
-    PROJECT_ROOT /
-    "data" /
-    "risk_library" /
-    "risk_keywords.csv"
-)
-
 SIMILARITY_THRESHOLD = 0.68
-
-
-def keyword_match(text, keywords):
-
-    text = str(text).lower()
-
-    for keyword in keywords.split("|"):
-
-        if keyword.strip().lower() in text:
-
-            return True
-
-    return False
 
 
 def detect_risks(clauses_df):
 
-    # if clauses_df is None:
-
-    #     clauses_df = pd.read_csv(
-    #         CLAUSES_FILE
-    #     )
-
     risk_df = pd.read_csv(
         RISK_FILE
-    )
-
-    keyword_df = pd.read_csv(
-        KEYWORDS_FILE
     )
 
     print(
@@ -68,10 +30,6 @@ def detect_risks(clauses_df):
     print(
         f"Risk Library Size: {len(risk_df)}"
     )
-
-    # model = SentenceTransformer(
-    #     "all-MiniLM-L6-v2"
-    # )
 
     contract_embeddings = model.encode(
         clauses_df["text"]
@@ -104,87 +62,53 @@ def detect_risks(clauses_df):
             best_match_idx
         ]
 
-        if best_score < SIMILARITY_THRESHOLD:
+        if best_score >= SIMILARITY_THRESHOLD:
 
-            continue
-
-        risk_type = risk_df.iloc[
-            best_match_idx
-        ]["risk_type"]
-
-        keyword_row = keyword_df[
-            keyword_df["risk_type"]
-            == risk_type
-        ]
-
-        clause_text = str(
-            clauses_df.iloc[
-                clause_idx
-            ]["text"]
-        )
-
-        keyword_confirmed = True
-
-        severity = "MEDIUM"
-        recommendation = ""
-
-        if len(keyword_row) > 0:
-
-            keywords = keyword_row.iloc[
-                0
-            ]["keywords"]
-
-            keyword_confirmed = keyword_match(
-                clause_text,
-                keywords
+            contract_clause = (
+                clauses_df.iloc[
+                    clause_idx
+                ]["text"]
             )
 
-            severity = keyword_row.iloc[
-                0
-            ]["severity"]
+            title = (
+                clauses_df.iloc[
+                    clause_idx
+                ]["title"]
+            )
 
-            recommendation = keyword_row.iloc[
-                0
-            ]["recommendation"]
+            matched_row = risk_df.iloc[
+                best_match_idx
+            ]
 
-        if not keyword_confirmed:
+            results.append({
 
-            continue
+                "title":
+                    title,
 
-        title = clauses_df.iloc[
-            clause_idx
-        ]["title"]
+                "risk_type":
+                    matched_row["risk_type"],
 
-        matched_clause = risk_df.iloc[
-            best_match_idx
-        ]["clause"]
+                "severity":
+                    matched_row["severity"],
 
-        results.append({
+                "similarity":
+                    round(
+                        float(best_score),
+                        3
+                    ),
 
-            "title":
-                title,
+                "matched_clause":
+                    matched_row["clause"],
 
-            "risk_type":
-                risk_type,
+                "recommendation":
+                    matched_row[
+                        "recommendation"
+                    ],
 
-            "severity":
-                severity,
+                "contract_clause":
+                    contract_clause[:500]
 
-            "similarity":
-                round(
-                    float(best_score),
-                    3
-                ),
-
-            "matched_clause":
-                matched_clause,
-
-            "recommendation":
-                recommendation,
-
-            "contract_clause":
-                clause_text[:500]
-        })
+            })
 
     results_df = pd.DataFrame(
         results
@@ -203,51 +127,3 @@ def detect_risks(clauses_df):
     )
 
     return results_df
-
-
-if __name__ == "__main__":
-
-    # clauses_df = pd.read_csv(
-    #     CLAUSES_FILE
-    # )
-    print(
-        "Run through pipeline."
-    )
-
-    # results_df = detect_risks(
-    #     clauses_df
-    # )
-
-    print("\n")
-    print("=" * 80)
-    print("RISK DETECTION RESULTS")
-    print("=" * 80)
-
-    for _, row in results_df.iterrows():
-
-        print(
-            f"\nRisk: {row['risk_type']}"
-        )
-
-        print(
-            f"Severity: {row['severity']}"
-        )
-
-        print(
-            f"Similarity: {row['similarity']}"
-        )
-
-        print(
-            f"Clause: {row['title']}"
-        )
-
-        print(
-            f"Recommendation: "
-            f"{row['recommendation']}"
-        )
-
-    print("\n")
-    print("=" * 80)
-    print(
-        f"Total Risks Found: {len(results_df)}"
-    )
